@@ -69,13 +69,15 @@ if(dataProcess){
     destFileHandle <- file(destPath, open="wb")
     writeBin(binData,destFileHandle)
     close(destFileHandle)
-    rm(binData, destFileHandle)
+    # Clear temporary items from memory
+    rm(binData, fileUrl, destFileHandle)
   }
   # unzip bz2 file to csv
   if(!file.exists("./data/StormData.csv")){
     filePath <- "./data/StormData.csv.bz2"
     destPath <- "./data/StormData.csv"
     bunzip2(filePath,destPath,overwrite=TRUE, remove=FALSE)
+    # Clear temporary items from memory
     rm(filePath, destPath)
   }
 }
@@ -97,6 +99,8 @@ if(dataProcess){
   neededColumns <- c("BGN_DATE", "EVTYPE", "FATALITIES", "INJURIES", "PROPDMG", "PROPDMGEXP", "CROPDMG", "CROPDMGEXP")
   reducedStormData <- csvStormData[, neededColumns]
 #  reducedStormData <- rename(reducedStormData, c("FATALITIES"="fatalities", "INJURIES"="injuries"))
+
+# Clear temporary items from memory
   rm(csvStormData,neededColumns)
 }
 ```
@@ -137,28 +141,61 @@ In this instance there are 11 levels defined, covering effectifly the majority a
 if(dataProcess){
   reducedStormData$damageSource <- NA
   
-  reducedStormData[grepl("precipitation|rain|hail|drizzle|wet|percip|burst|depression|fog|wall cloud", 
-                         reducedStormData$EVTYPE, ignore.case = TRUE), "damageSource"] <- "Precipitation & Fog"
-  reducedStormData[grepl("wind|storm|wnd|hurricane|typhoon", 
-                         reducedStormData$EVTYPE, ignore.case = TRUE), "damageSource"] <- "Wind & Storm"
-  reducedStormData[grepl("slide|erosion|slump", 
-                         reducedStormData$EVTYPE, ignore.case = TRUE), "damageSource"] <- "Landslide & Erosion"
-  reducedStormData[grepl("warmth|warm|heat|dry|hot|drought|thermia|temperature record|record temperature|record high", 
-                         reducedStormData$EVTYPE, ignore.case = TRUE), "damageSource"] <- "Heat & Drought"
-  reducedStormData[grepl("cold|cool|ice|icy|frost|freeze|snow|winter|wintry|wintery|blizzard|chill|freezing|avalanche|glaze|sleet", 
-                         reducedStormData$EVTYPE, ignore.case = TRUE), "damageSource"] <- "Snow & Ice"
-  reducedStormData[grepl("flood|surf|blow-out|swells|fld|dam break", 
-                         reducedStormData$EVTYPE, ignore.case = TRUE), "damageSource"] <- "Flooding & High Surf"
-  reducedStormData[grepl("seas|high water|tide|tsunami|wave|current|marine|drowning", 
-                         reducedStormData$EVTYPE, ignore.case = TRUE), "damageSource"] <- "High seas"
-  reducedStormData[grepl("dust|saharan", 
-                         reducedStormData$EVTYPE, ignore.case = TRUE), "damageSource"] <- "Dust & Saharan winds"  
-  reducedStormData[grepl("tstm|thunderstorm|lightning", 
-                         reducedStormData$EVTYPE, ignore.case = TRUE), "damageSource"] <- "Thunderstorm & Lightning"
-  reducedStormData[grepl("tornado|spout|funnel|whirlwind", 
-                         reducedStormData$EVTYPE, ignore.case = TRUE), "damageSource"] <- "Tornado"
-  reducedStormData[grepl("fire|smoke|volcanic", 
-                         reducedStormData$EVTYPE, ignore.case = TRUE), "damageSource"] <- "Fire & Volcanic activity"
+  reducedStormData[
+    grepl("precipitation|rain|hail|drizzle|wet|percip|burst|depression|fog|wall cloud", 
+          reducedStormData$EVTYPE, 
+          ignore.case = TRUE), 
+    "damageSource"] <- "Precipitation & Fog"
+  reducedStormData[
+    grepl("wind|storm|wnd|hurricane|typhoon", 
+          reducedStormData$EVTYPE, 
+          ignore.case = TRUE), 
+    "damageSource"] <- "Wind & Storm"
+  reducedStormData[
+    grepl("slide|erosion|slump", 
+          reducedStormData$EVTYPE, 
+          ignore.case = TRUE), 
+    "damageSource"] <- "Landslide & Erosion"
+  reducedStormData[
+    grepl("warmth|warm|heat|dry|hot|drought|thermia|temperature record|record temperature|record high",
+          reducedStormData$EVTYPE, 
+          ignore.case = TRUE), 
+    "damageSource"] <- "Heat & Drought"
+  reducedStormData[
+    grepl("cold|cool|ice|icy|frost|freeze|snow|winter|wintry|wintery|blizzard|chill|freezing|avalanche|glaze|sleet",
+          reducedStormData$EVTYPE, 
+          ignore.case = TRUE), 
+    "damageSource"] <- "Snow & Ice"
+  reducedStormData[
+    grepl("flood|surf|blow-out|swells|fld|dam break", 
+          reducedStormData$EVTYPE, 
+          ignore.case = TRUE), 
+    "damageSource"] <- "Flooding & High Surf"
+  reducedStormData[
+    grepl("seas|high water|tide|tsunami|wave|current|marine|drowning", 
+          reducedStormData$EVTYPE, 
+          ignore.case = TRUE), 
+    "damageSource"] <- "High seas"
+  reducedStormData[
+    grepl("dust|saharan", 
+          reducedStormData$EVTYPE, 
+          ignore.case = TRUE), 
+    "damageSource"] <- "Dust & Saharan winds"  
+  reducedStormData[
+    grepl("tstm|thunderstorm|lightning", 
+          reducedStormData$EVTYPE, 
+          ignore.case = TRUE), 
+    "damageSource"] <- "Thunderstorm & Lightning"
+  reducedStormData[
+    grepl("tornado|spout|funnel|whirlwind", 
+          reducedStormData$EVTYPE, 
+          ignore.case = TRUE), 
+    "damageSource"] <- "Tornado"
+  reducedStormData[
+    grepl("fire|smoke|volcanic", 
+          reducedStormData$EVTYPE, 
+          ignore.case = TRUE), 
+    "damageSource"] <- "Fire & Volcanic activity"
   
   # remove uncategorized records (damageSource == NA) & cast as factor
   reducedStormData <- reducedStormData[complete.cases(reducedStormData[, "damageSource"]), ]
