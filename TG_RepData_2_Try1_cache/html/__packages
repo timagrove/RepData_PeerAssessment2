@@ -1,0 +1,11 @@
+base
+bitops
+RCurl
+R.methodsS3
+R.oo
+R.utils
+plyr
+reshape2
+ggplot2
+gridExtra
+scales

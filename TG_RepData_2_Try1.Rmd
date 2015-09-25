@@ -98,7 +98,7 @@ Just keep the columns: BGN_DATE, EVTYPE, FATALITIES, INJURIES, PROPDMG, PROPDMGE
 if(dataProcess){
   neededColumns <- c("BGN_DATE", "EVTYPE", "FATALITIES", "INJURIES", "PROPDMG", "PROPDMGEXP", "CROPDMG", "CROPDMGEXP")
   reducedStormData <- csvStormData[, neededColumns]
-#  reducedStormData <- rename(reducedStormData, c("FATALITIES"="fatalities", "INJURIES"="injuries"))
+  reducedStormData <- rename(reducedStormData, c("FATALITIES"="fatalities", "INJURIES"="injuries"))
 
 # Clear temporary items from memory
   rm(csvStormData,neededColumns)
@@ -371,7 +371,10 @@ gg.mid <- ggplot_gtable(ggplot_build(g.mid))
 
 grid.arrange(gg.injuries,gg.mid,gg.fatalities,
              ncol=3,widths=c(4/10,2/10,4/10),
-             main=paste("Aggregated human injuries & fatalities for weather events from ",cutOffYear," to ",endYear, sep=""))
+             #main=paste("Aggregated human injuries & fatalities for weather events from ",cutOffYear," to ",endYear, sep="")
+             top=paste("Aggregated human injuries & fatalities for weather events from ",cutOffYear," to ",endYear, sep="")
+             )
+
 ```
 
 The underlying data
